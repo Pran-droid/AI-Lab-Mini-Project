@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>American Express | AI Fraud Detection System</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Franklin:wght@300;400;500;600;700&family=Fraunces:wght@600;700&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body class="min-h-screen bg-amex-ivory text-slate-900">
+  <div class="page-glow"></div>
+  <div class="page-grid"></div>
+
+  <header class="relative z-10">
+    <div class="mx-auto max-w-6xl px-6 pt-8">
+      <div class="flex flex-col gap-6 rounded-2xl bg-amex-blue px-8 py-6 text-white shadow-amex">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div class="flex items-center gap-4">
+            <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-white/10 ring-1 ring-white/30">
+              <svg aria-hidden="true" class="h-7 w-7 text-amex-gold" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 2l7 3v6c0 5-3.4 9.7-7 11-3.6-1.3-7-6-7-11V5l7-3zm0 4.2L7 7.5v3.9c0 3.4 2.2 6.7 5 7.8 2.8-1.1 5-4.4 5-7.8V7.5l-5-1.3z" />
+              </svg>
+            </div>
+            <div>
+              <p class="text-sm uppercase tracking-[0.3em] text-white/70">American Express</p>
+              <h1 class="font-display text-2xl sm:text-3xl">AI Fraud Detection System</h1>
+            </div>
+          </div>
+          <div class="flex items-center gap-3 rounded-full bg-white/10 px-4 py-2 text-xs uppercase tracking-[0.2em]">
+            <span class="inline-flex h-2 w-2 rounded-full bg-emerald-400"></span>
+            Secure &amp; Confidential
+          </div>
+        </div>
+        <p class="max-w-2xl text-sm text-white/80">Evaluate transaction risk instantly with a simplified feature set designed for fast, confident review.</p>
+        <div class="flex flex-wrap items-center gap-3 text-xs uppercase tracking-[0.2em] text-white/70">
+          <span class="stat-pill">Real-time scoring</span>
+          <span class="stat-pill">Encrypted inputs</span>
+          <span class="stat-pill">Explainable signals</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="relative z-10">
+    <div class="mx-auto max-w-6xl px-6 pb-16 pt-10">
+      {% with messages = get_flashed_messages(category_filter=['error']) %}
+      {% if messages %}
+      <div class="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        {{ messages[0] }}
+      </div>
+      {% endif %}
+      {% endwith %}
+
+      <div class="grid gap-8 lg:grid-cols-[1.25fr_0.9fr]">
+        <section class="rounded-2xl bg-white/90 p-6 shadow-amex-soft backdrop-blur">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <p class="section-kicker">Transaction Inputs</p>
+              <h2 class="section-title">Review core transaction signals</h2>
+            </div>
+            <div class="flex flex-wrap gap-3">
+              <button type="button" class="amex-btn-secondary" data-fill="legit">Load Legitimate Sample</button>
+              <button type="button" class="amex-btn-danger" data-fill="fraud">Load Fraud Sample</button>
+            </div>
+          </div>
+
+          <form action="{{ url_for('predict') }}" method="POST" class="mt-6" id="fraud-form">
+            <div class="grid gap-4 sm:grid-cols-2">
+              {% set values = form_values or {} %}
+              <label class="field">
+                <span>Time</span>
+                <input name="time" type="number" step="any" placeholder="e.g. 50000" value="{{ values.get('time', '') }}" required />
+              </label>
+              <label class="field">
+                <span>Amount</span>
+                <input name="amount" type="number" step="any" placeholder="e.g. 150.75" value="{{ values.get('amount', '') }}" required />
+              </label>
+              <label class="field">
+                <span>V1</span>
+                <input name="v1" type="number" step="any" placeholder="e.g. 0.8" value="{{ values.get('v1', '') }}" required />
+              </label>
+              <label class="field">
+                <span>V2</span>
+                <input name="v2" type="number" step="any" placeholder="e.g. -0.3" value="{{ values.get('v2', '') }}" required />
+              </label>
+              <label class="field">
+                <span>V3</span>
+                <input name="v3" type="number" step="any" placeholder="e.g. 1.2" value="{{ values.get('v3', '') }}" required />
+              </label>
+              <label class="field">
+                <span>V4</span>
+                <input name="v4" type="number" step="any" placeholder="e.g. -0.5" value="{{ values.get('v4', '') }}" required />
+              </label>
+              <label class="field">
+                <span>V10</span>
+                <input name="v10" type="number" step="any" placeholder="e.g. 0.6" value="{{ values.get('v10', '') }}" required />
+              </label>
+              <label class="field">
+                <span>V14</span>
+                <input name="v14" type="number" step="any" placeholder="e.g. -0.4" value="{{ values.get('v14', '') }}" required />
+              </label>
+            </div>
+
+            <div class="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div class="text-sm text-slate-500">
+                Prediction uses the pre-trained model with secure server-side processing.
+              </div>
+              <button type="submit" class="amex-btn-primary" id="predict-btn">
+                <span class="btn-text">Predict Fraud Risk</span>
+                <span class="spinner" aria-hidden="true"></span>
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <aside class="space-y-6">
+          <div class="preview-card">
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-semibold uppercase tracking-[0.2em] text-amex-blue">Live Preview</h3>
+              <span class="text-[11px] uppercase tracking-[0.2em] text-slate-400">Draft</span>
+            </div>
+            <div class="preview-grid mt-4">
+              <div>
+                <span>Amount</span>
+                <strong>${{ values.get('amount', '—') }}</strong>
+              </div>
+              <div>
+                <span>Time</span>
+                <strong>{{ values.get('time', '—') }}</strong>
+              </div>
+              <div>
+                <span>V1</span>
+                <strong>{{ values.get('v1', '—') }}</strong>
+              </div>
+              <div>
+                <span>V2</span>
+                <strong>{{ values.get('v2', '—') }}</strong>
+              </div>
+              <div>
+                <span>V3</span>
+                <strong>{{ values.get('v3', '—') }}</strong>
+              </div>
+              <div>
+                <span>V4</span>
+                <strong>{{ values.get('v4', '—') }}</strong>
+              </div>
+              <div>
+                <span>V10</span>
+                <strong>{{ values.get('v10', '—') }}</strong>
+              </div>
+              <div>
+                <span>V14</span>
+                <strong>{{ values.get('v14', '—') }}</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="rounded-2xl bg-white p-6 shadow-amex-soft">
+            <h3 class="text-sm font-semibold uppercase tracking-[0.2em] text-amex-blue">System Status</h3>
+            <p class="mt-3 text-sm text-slate-600">Model online. Secure scoring with encrypted request handling.</p>
+            <div class="mt-4 flex items-center gap-3">
+              <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+              <span class="text-sm font-medium text-slate-700">Inference engine ready</span>
+            </div>
+            <div class="mt-6 grid gap-3">
+              <div class="metric-row">
+                <span>Latency</span>
+                <span>120 ms</span>
+              </div>
+              <div class="metric-row">
+                <span>Model version</span>
+                <span>v2.4</span>
+              </div>
+              <div class="metric-row">
+                <span>Signals active</span>
+                <span>8 / 30</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="rounded-2xl bg-white p-6 shadow-amex-soft">
+            <h3 class="text-sm font-semibold uppercase tracking-[0.2em] text-amex-blue">Risk Guidance</h3>
+            <ul class="mt-3 space-y-2 text-sm text-slate-600">
+              <li>Review flagged transactions with enhanced verification.</li>
+              <li>Cross-check unusual amounts with customer history.</li>
+              <li>Escalate high-risk scores for manual review.</li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+
+      {% if result %}
+      <section class="mt-10">
+        <div class="result-card {{ 'is-fraud' if result.is_fraud else 'is-legit' }}">
+          <div class="flex flex-col gap-6">
+            <div class="flex items-center justify-between gap-6">
+              <div>
+                <p class="text-xs uppercase tracking-[0.3em]">Prediction Result</p>
+                <h3 class="mt-2 text-2xl font-semibold">{{ result.label }}</h3>
+                {% if result.confidence is not none %}
+                <p class="mt-2 text-sm">Confidence: <span class="font-semibold">{{ (result.confidence * 100) | round(2) }}%</span></p>
+                {% endif %}
+                {% if result.fraud_score is not none %}
+                <p class="text-xs text-white/80">Fraud probability: {{ (result.fraud_score * 100) | round(2) }}%</p>
+                {% endif %}
+              </div>
+              <div class="result-icon">
+                {% if result.is_fraud %}
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2l9 16H3l9-16zm0 5.5L10.7 13h2.6L12 7.5zm0 8.5a1.4 1.4 0 100 2.8 1.4 1.4 0 000-2.8z" />
+                </svg>
+                {% else %}
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M12 2a10 10 0 100 20 10 10 0 000-20zm4.7 7.9l-5 5a1 1 0 01-1.4 0l-2-2a1 1 0 011.4-1.4l1.3 1.3 4.3-4.3a1 1 0 011.4 1.4z" />
+                </svg>
+                {% endif %}
+              </div>
+            </div>
+            {% if result.confidence is not none %}
+            <div class="metric-bar">
+              <div class="metric-track">
+                <div class="metric-fill" style="width: {{ (result.confidence * 100) | round(2) }}%"></div>
+              </div>
+              <div class="metric-labels">
+                <span>Low risk</span>
+                <span>High confidence</span>
+              </div>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </section>
+      {% endif %}
+
+      <section class="mt-10">
+        <div class="timeline-card">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="section-kicker">Decision Timeline</p>
+              <h2 class="section-title">Audit trail for this evaluation</h2>
+            </div>
+            <span class="text-xs uppercase tracking-[0.2em] text-slate-400">Last 60 seconds</span>
+          </div>
+          <div class="timeline">
+            <div class="timeline-item">
+              <span class="timeline-dot"></span>
+              <div>
+                <p class="text-sm font-semibold text-slate-800">Pre-screen checks complete</p>
+                <p class="text-xs text-slate-500">Velocity + location heuristics validated.</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <span class="timeline-dot"></span>
+              <div>
+                <p class="text-sm font-semibold text-slate-800">Model inference executed</p>
+                <p class="text-xs text-slate-500">8 core signals scored against baseline profile.</p>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <span class="timeline-dot"></span>
+              <div>
+                <p class="text-sm font-semibold text-slate-800">Analyst routing ready</p>
+                <p class="text-xs text-slate-500">Escalate to manual review if needed.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="border-t border-slate-200/60 bg-white/70">
+    <div class="mx-auto flex max-w-6xl flex-col gap-3 px-6 py-6 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+      <p>Powered by Machine Learning | American Express Research</p>
+      <p>Risk assessment for demonstration purposes only.</p>
+    </div>
+  </footer>
+
+  <script>
+    const samples = {
+      legit: { time: 50000, amount: 150.75, v1: 0.8, v2: -0.3, v3: 1.2, v4: -0.5, v10: 0.6, v14: -0.4 },
+      fraud: { time: 80000, amount: 1200.5, v1: -3.5, v2: 2.8, v3: -4.1, v4: 3.2, v10: -2.9, v14: 4.5 }
+    };
+
+    document.querySelectorAll("[data-fill]").forEach((button) => {
+      button.addEventListener("click", () => {
+        const sample = samples[button.dataset.fill];
+        if (!sample) return;
+        Object.entries(sample).forEach(([key, value]) => {
+          const input = document.querySelector(`input[name="${key}"]`);
+          if (input) input.value = value;
+        });
+      });
+    });
+
+    const form = document.getElementById("fraud-form");
+    const btn = document.getElementById("predict-btn");
+    if (form && btn) {
+      form.addEventListener("submit", () => {
+        btn.classList.add("is-loading");
+      });
+    }
+  </script>
+</body>
+</html>
