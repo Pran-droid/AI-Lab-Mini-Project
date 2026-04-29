@@ -35,3 +35,4 @@ Open http://localhost:5000 in your browser.
 
 - The model expects all 30 features. The UI captures 8 and fills the rest with zeros.
 - Update app.secret_key before deploying to production.
+- The raw dataset files (creditcard.csv) are not included in this repo due to GitHub size limits. Download them separately and keep them local only. Link to download and access the dataset: https://www.kaggle.com/code/aarthiramalingam/creditcard
